@@ -1,0 +1,181 @@
+*,
+:host {
+  box-sizing: border-box;
+
+  &[\:clip] {
+    overflow: hidden;
+  }
+
+  &[\:inline] {
+    display: inline-flex;
+  }
+
+  &[\:layout='horiz'] {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  &[\:layout='vert'] {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  &[\:layout='wrap'] {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  &[\:align~='center'] {
+    justify-content: center;
+    align-items: center;
+  }
+
+  &[\:layout='horiz'],
+  &[\:layout='wrap'] {
+    /* Sets align-item */
+    &:not([\:align~='top']):not([\:align~='bottom']):not([\:align~='baseline']):not([\:align~='center']),
+    &[\:align~='top'] {
+      align-items: flex-start;
+    }
+    &[\:align~='bottom'] {
+      align-items: flex-end;
+    }
+    &[\:align~='baseline'] {
+      align-items: baseline;
+    }
+
+    /* Sets justify-content */
+    &:not([\:align~='left']):not([\:align~='right']):not([\:align~='center']),
+    &[\:align~='left'] {
+      justify-content: flex-start;
+    }
+    &[\:align~='right'] {
+      justify-content: flex-end;
+    }
+
+    /* Sets children */
+    & > [\:w='fill'] {
+      flex: 1 0 0;
+    }
+    & > [\:h='fill'] {
+      align-self: stretch;
+    }
+    & > [\:w='fill']:not([\:layout]),
+    & > [\:h='fill']:not([\:layout]) {
+      display: block;
+    }
+    & > [\:w='hug'] {
+      flex: 0 0 auto;
+      justify-self: center;
+    }
+  }
+
+  &[\:layout='vert'] {
+    /* Sets justify-content */
+    &:not([\:align~='top']):not([\:align~='bottom']):not([\:align~='baseline']):not([\:align~='center']),
+    &[\:align~='top'] {
+      justify-content: flex-start;
+    }
+    &[\:align~='bottom'] {
+      justify-content: flex-end;
+    }
+    &[\:align~='baseline'] {
+      justify-content: baseline;
+    }
+
+    /* Sets align-item */
+    &:not([\:align~='left']):not([\:align~='right']):not([\:align~='center']),
+    &[\:align~='left'] {
+      align-items: flex-start;
+    }
+    &[\:align~='right'] {
+      align-items: flex-end;
+    }
+
+    /* Sets children */
+    & > [\:h='fill'] {
+      flex: 1 0 0;
+    }
+    & > [\:h='hug'] {
+      flex: 0 0 auto;
+    }
+    & > [\:w='fill'] {
+      align-self: stretch;
+    }
+    & > [\:h='fill']:not([\:layout]),
+    & > [\:w='fill']:not([\:layout]) {
+      display: block;
+    }
+  }
+}
+
+slot[\:layout='horiz'],
+slot[\:layout='wrap'] {
+  &::slotted([\:w='hug']) {
+    flex: 0 0 auto;
+  }
+  &::slotted([\:w='fill']) {
+    flex: 1 0 0;
+  }
+  &::slotted([\:h='fill']) {
+    align-self: stretch;
+  }
+  &::slotted([\:w='fill']:not([\:layout])),
+  &::slotted([\:h='fill']:not([\:layout])) {
+    display: block;
+  }
+}
+
+:host([\:layout='horiz']),
+:host([\:layout='wrap']) {
+  & > slot::slotted([\:w='hug']) {
+    flex: 0 0 auto;
+  }
+  & > slot::slotted([\:w='fill']) {
+    flex: 1 0 0;
+  }
+  & > slot::slotted([\:h='fill']) {
+    align-self: stretch;
+  }
+  & > slot::slotted([\:w='fill']:not([\:layout])),
+  & > slot::slotted([\:h='fill']:not([\:layout])) {
+    display: block;
+  }
+}
+
+slot[\:layout='vert'] {
+  &::slotted([\:h='hug']) {
+    flex: 0 0 auto;
+  }
+  &::slotted([\:h='fill']) {
+    flex: 1 0 0;
+  }
+  &::slotted([\:w='fill']) {
+    align-self: stretch;
+  }
+  &::slotted([\:h='fill']:not([\:layout])),
+  &::slotted([\:w='fill']:not([\:layout])) {
+    display: block;
+  }
+}
+
+:host([\:layout='vert']) {
+  & > slot::slotted([\:h='hug']) {
+    flex: 0 0 auto;
+  }
+  & > slot::slotted([\:h='fill']) {
+    flex: 1 0 0;
+  }
+  & > slot::slotted([\:w='fill']) {
+    align-self: stretch;
+  }
+  & > slot::slotted([\:h='fill']:not([\:layout])),
+  & > slot::slotted([\:w='fill']:not([\:layout])) {
+    display: block;
+  }
+}
