@@ -2,6 +2,8 @@
 :host {
   box-sizing: border-box;
 
+  /** ===== Rules for self ===== */
+
   &[\:clip] {
     overflow: hidden;
   }
@@ -13,15 +15,15 @@
   &[\:layout='horiz'] {
     display: flex;
     flex-direction: row;
-    justify-content: stretch;
-    align-items: stretch;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 
   &[\:layout='vert'] {
     display: flex;
     flex-direction: column;
-    justify-content: stretch;
-    align-items: stretch;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 
   &[\:layout='wrap'] {
@@ -30,7 +32,9 @@
     flex-wrap: wrap;
   }
 
-  &[\:align~='center'] {
+  &[\:align~='center']:not([\:align~='top']):not([\:align~='bottom']):not([\:align~='baseline']):not(
+      [\:align~='left']
+    ):not([\:align~='right']) {
     justify-content: center;
     align-items: center;
   }
@@ -38,7 +42,6 @@
   &[\:layout='horiz'],
   &[\:layout='wrap'] {
     /* Sets align-item */
-    &:not([\:align~='top']):not([\:align~='bottom']):not([\:align~='baseline']):not([\:align~='center']),
     &[\:align~='top'] {
       align-items: flex-start;
     }
@@ -48,17 +51,67 @@
     &[\:align~='baseline'] {
       align-items: baseline;
     }
+    &[\:align~='center'] {
+      &[\:align~='left'],
+      &[\:align~='right'] {
+        align-items: center;
+      }
+    }
 
     /* Sets justify-content */
-    &:not([\:align~='left']):not([\:align~='right']):not([\:align~='center']),
     &[\:align~='left'] {
       justify-content: flex-start;
     }
     &[\:align~='right'] {
       justify-content: flex-end;
     }
+    &[\:align~='center'] {
+      &[\:align~='top'],
+      &[\:align~='bottom'],
+      &[\:align~='baseline'] {
+        justify-content: center;
+      }
+    }
+  }
 
-    /* Sets children */
+  &[\:layout='vert'] {
+    /* Sets justify-content */
+    &[\:align~='top'] {
+      justify-content: flex-start;
+    }
+    &[\:align~='bottom'] {
+      justify-content: flex-end;
+    }
+    &[\:align~='baseline'] {
+      justify-content: baseline;
+    }
+    &[\:align~='center'] {
+      &[\:align~='left'],
+      &[\:align~='right'] {
+        justify-content: center;
+      }
+    }
+
+    /* Sets align-item */
+    &[\:align~='left'] {
+      align-items: flex-start;
+    }
+    &[\:align~='right'] {
+      align-items: flex-end;
+    }
+    &[\:align~='center'] {
+      &[\:align~='top'],
+      &[\:align~='bottom'],
+      &[\:align~='baseline'] {
+        align-items: center;
+      }
+    }
+  }
+
+  /** ===== Rules for children ===== */
+
+  &[\:layout='horiz'],
+  &[\:layout='wrap'] {
     & > [\:w='fill'] {
       flex: 1 0 0;
     }
@@ -71,38 +124,30 @@
     }
     & > [\:w='hug'] {
       flex: 0 0 auto;
-      justify-self: center;
+    }
+
+    /** Child override */
+    & > [\:h='hug'][\:align-self~='top'] {
+      align-self: flex-start;
+    }
+    & > [\:h='hug'][\:align-self~='bottom'] {
+      align-self: flex-end;
+    }
+    & > [\:h='hug'][\:align-self~='baseline'] {
+      align-self: flex-end;
+    }
+    &
+      > [\:h='hug'][\:align-self~='center']:not([\:align-self~='top']):not([\:align-self~='bottom']):not(
+        [\:align-self~='baseline']
+      ) {
+      align-self: center;
     }
   }
 
   &[\:layout='vert'] {
-    /* Sets justify-content */
-    &:not([\:align~='top']):not([\:align~='bottom']):not([\:align~='baseline']):not([\:align~='center']),
-    &[\:align~='top'] {
-      justify-content: flex-start;
-    }
-    &[\:align~='bottom'] {
-      justify-content: flex-end;
-    }
-    &[\:align~='baseline'] {
-      justify-content: baseline;
-    }
-
-    /* Sets align-item */
-    &:not([\:align~='left']):not([\:align~='right']):not([\:align~='center']),
-    &[\:align~='left'] {
-      align-items: flex-start;
-    }
-    &[\:align~='right'] {
-      align-items: flex-end;
-    }
-
     /* Sets children */
     & > [\:h='fill'] {
       flex: 1 0 0;
-    }
-    & > [\:h='hug'] {
-      flex: 0 0 auto;
     }
     & > [\:w='fill'] {
       align-self: stretch;
@@ -111,14 +156,25 @@
     & > [\:w='fill']:not([\:layout]) {
       display: block;
     }
+    & > [\:h='hug'] {
+      flex: 0 0 auto;
+    }
+
+    /** Child override */
+    & > [\:w='hug'][\:align-self~='left'] {
+      align-self: flex-start;
+    }
+    & > [\:w='hug'][\:align-self~='right'] {
+      align-self: flex-end;
+    }
+    & > [\:w='hug'][\:align-self~='center']:not([\:align-self~='left']):not([\:align-self~='right']) {
+      align-self: center;
+    }
   }
 }
 
 slot[\:layout='horiz'],
 slot[\:layout='wrap'] {
-  &::slotted([\:w='hug']) {
-    flex: 0 0 auto;
-  }
   &::slotted([\:w='fill']) {
     flex: 1 0 0;
   }
@@ -129,29 +185,30 @@ slot[\:layout='wrap'] {
   &::slotted([\:h='fill']:not([\:layout])) {
     display: block;
   }
-}
-
-:host([\:layout='horiz']),
-:host([\:layout='wrap']) {
-  & > slot::slotted([\:w='hug']) {
+  &::slotted([\:w='hug']) {
     flex: 0 0 auto;
   }
-  & > slot::slotted([\:w='fill']) {
-    flex: 1 0 0;
+
+  /** Child override */
+  &::slotted([\:h='hug'][\:align-self~='top']) {
+    align-self: flex-start;
   }
-  & > slot::slotted([\:h='fill']) {
-    align-self: stretch;
+  &::slotted([\:h='hug'][\:align-self~='bottom']) {
+    align-self: flex-end;
   }
-  & > slot::slotted([\:w='fill']:not([\:layout])),
-  & > slot::slotted([\:h='fill']:not([\:layout])) {
-    display: block;
+  &::slotted([\:h='hug'][\:align-self~='baseline']) {
+    align-self: flex-end;
+  }
+  &::slotted(
+      [\:h='hug'][\:align-self~='center']:not([\:align-self~='top']):not([\:align-self~='bottom']):not(
+          [\:align-self~='baseline']
+        )
+    ) {
+    align-self: center;
   }
 }
 
 slot[\:layout='vert'] {
-  &::slotted([\:h='hug']) {
-    flex: 0 0 auto;
-  }
   &::slotted([\:h='fill']) {
     flex: 1 0 0;
   }
@@ -162,12 +219,58 @@ slot[\:layout='vert'] {
   &::slotted([\:w='fill']:not([\:layout])) {
     display: block;
   }
+  &::slotted([\:h='hug']) {
+    flex: 0 0 auto;
+  }
+  /** Child override */
+  &::slotted([\:w='hug'][\:align-self~='left']) {
+    align-self: flex-start;
+  }
+  &::slotted([\:w='hug'][\:align-self~='right']) {
+    align-self: flex-end;
+  }
+  &::slotted([\:w='hug'][\:align-self~='center']:not([\:align-self~='left']):not([\:align-self~='right'])) {
+    align-self: center;
+  }
+}
+
+:host([\:layout='horiz']),
+:host([\:layout='wrap']) {
+  & > slot::slotted([\:w='fill']) {
+    flex: 1 0 0;
+  }
+  & > slot::slotted([\:h='fill']) {
+    align-self: stretch;
+  }
+  & > slot::slotted([\:w='fill']:not([\:layout])),
+  & > slot::slotted([\:h='fill']:not([\:layout])) {
+    display: block;
+  }
+  & > slot::slotted([\:w='hug']) {
+    flex: 0 0 auto;
+  }
+
+  /** Child override */
+  & > slot::slotted([\:h='hug'][\:align-self~='top']) {
+    align-self: flex-start;
+  }
+  & > slot::slotted([\:h='hug'][\:align-self~='bottom']) {
+    align-self: flex-end;
+  }
+  & > slot::slotted([\:h='hug'][\:align-self~='baseline']) {
+    align-self: flex-end;
+  }
+  &
+    > slot::slotted(
+      [\:h='hug'][\:align-self~='center']:not([\:align-self~='top']):not([\:align-self~='bottom']):not(
+          [\:align-self~='baseline']
+        )
+    ) {
+    align-self: center;
+  }
 }
 
 :host([\:layout='vert']) {
-  & > slot::slotted([\:h='hug']) {
-    flex: 0 0 auto;
-  }
   & > slot::slotted([\:h='fill']) {
     flex: 1 0 0;
   }
@@ -177,5 +280,22 @@ slot[\:layout='vert'] {
   & > slot::slotted([\:h='fill']:not([\:layout])),
   & > slot::slotted([\:w='fill']:not([\:layout])) {
     display: block;
+  }
+  & > slot::slotted([\:h='hug']) {
+    flex: 0 0 auto;
+  }
+
+  /** Child override */
+  & > slot::slotted([\:w='hug'][\:align-self~='left']) {
+    align-self: flex-start;
+  }
+  & > slot::slotted([\:w='hug'][\:align-self~='right']) {
+    align-self: flex-end;
+  }
+  &
+    > slot::slotted(
+      [\:w='hug'][\:align-self~='center']:not([\:align-self~='left']):not([\:align-self~='right'])
+    ) {
+    align-self: center;
   }
 }
